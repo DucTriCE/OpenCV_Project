@@ -42,19 +42,17 @@ def getContours(img):
 path = 'Data/shapes.png'
 img = cv2.imread(path)
 
-while True:
-    imgBlank = np.zeros_like(img)
-    imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    imgBlur = cv2.GaussianBlur(imgGray, (7,7), 1)
-    imgCanny = cv2.Canny(imgBlur, 50,50)
-    getContours(imgCanny)
+imgBlank = np.zeros_like(img)
+imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+imgBlur = cv2.GaussianBlur(imgGray, (7,7), 1)
+imgCanny = cv2.Canny(imgBlur, 50,50)
+getContours(imgCanny)
 
-    imgStack = stackImages(0.6, ([img, imgGray, imgBlur],
-                                 [imgCanny, imgBlank, imgBlank]))
+imgStack = stackImages(0.6, ([img, imgGray, imgBlur],
+                             [imgCanny, imgBlank, imgBlank]))
 
-    # cv2.imshow("Original", img)
-    # cv2.imshow("imgGray", imgGray)
-    # cv2.imshow("imgBlur", imgBlur)
-    cv2.imshow("Stack Image", imgStack)
-    # if cv2.waitKey(1) & 0xFF==ord('q'):
-    #     break
+# cv2.imshow("Original", img)
+# cv2.imshow("imgGray", imgGray)
+# cv2.imshow("imgBlur", imgBlur)
+cv2.imshow("Stack Image", imgStack)
+cv2.waitKey(0)
