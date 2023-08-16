@@ -36,12 +36,31 @@ def getContours(img):
     countours, hierachy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     for cnt in countours:
         area = cv2.contourArea(cnt)
-        print(area)
+        # print(area)
+        if area>500:
+            cv2.drawContours(imgContour, cnt, -1, (255, 0, 0), 3)
+            param = cv2.arcLength(cnt, True)
+            # print(param)
+            approx = cv2.approxPolyDP(cnt, 0.02*param, True)
+            ObjCor = len(approx)
+            x, y, w, h = cv2.boundingRect(approx)
+            if ObjCor==3:
+                ObjectType="TRI"
+            elif ObjCor==4:
+                aspRatio=w/float(h)
+                if aspRatio>=0.95 and aspRatio<=1.05:
+                    ObjectType="SQR"
+                else:
+                    ObjectType="REC"
+            else:
+                ObjectType="CIR"
+            cv2.rectangle(imgContour, (x,y), (x+w,y+h), (0,255,0), 3)
+            cv2.putText(imgContour, ObjectType, (x, y+10), cv2.FONT_ITALIC, 0.8, (100,155,255), 3)
 
 
 path = 'Data/shapes.png'
 img = cv2.imread(path)
-
+imgContour = img.copy()
 imgBlank = np.zeros_like(img)
 imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 imgBlur = cv2.GaussianBlur(imgGray, (7,7), 1)
@@ -49,7 +68,7 @@ imgCanny = cv2.Canny(imgBlur, 50,50)
 getContours(imgCanny)
 
 imgStack = stackImages(0.6, ([img, imgGray, imgBlur],
-                             [imgCanny, imgBlank, imgBlank]))
+                             [imgCanny, imgContour, imgBlank]))
 
 # cv2.imshow("Original", img)
 # cv2.imshow("imgGray", imgGray)
